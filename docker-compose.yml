@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Lets MCP tools run without a real Cognito JWT — fine for local
+      # testing, must never be set in the real deployment.
+      ALLOW_ANONYMOUS_USER: "1"
+      # SQLite lives on a named volume so data survives `docker compose down`.
+      DATABASE_PATH: /data/calorie_tracker.db
+    env_file:
+      # Optional: copy .env.example to .env for a real USDA_API_KEY / Cognito
+      # settings. Not required — the app has working defaults without it.
+      - path: .env
+        required: false
+    volumes:
+      - db-data:/data
+
+volumes:
+  db-data:
