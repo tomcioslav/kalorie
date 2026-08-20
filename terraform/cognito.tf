@@ -35,9 +35,9 @@ resource "aws_cognito_user_pool_client" "this" {
   # narrower list here caused a real invalid_scope rejection the moment
   # Claude's connector requested "profile" in addition to what the
   # discovery doc offered, confirmed directly against the live pool.
-  allowed_oauth_scopes = ["openid", "email", "phone", "profile"]
-  callback_urls                        = ["https://claude.ai/api/mcp/auth_callback"]
-  supported_identity_providers         = ["COGNITO"]
+  allowed_oauth_scopes         = ["openid", "email", "phone", "profile"]
+  callback_urls                = ["https://claude.ai/api/mcp/auth_callback"]
+  supported_identity_providers = ["COGNITO"]
 
   explicit_auth_flows = ["ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 

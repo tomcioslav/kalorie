@@ -62,19 +62,37 @@ resource "aws_lightsail_instance_public_ports" "this" {
   # AWS's own infrastructure (confirmed directly, not assumed -- the older
   # design doc's assumption that browser SSH needs no firewall rule is
   # wrong).
+  #
+  # cidrs/ipv6_cidrs/cidr_list_aliases are pinned explicitly (matching
+  # AWS's own default of "open to everywhere") rather than left unset --
+  # they're Optional+Computed inside a Set-typed block, and leaving them
+  # unset makes Terraform hash the config's port_info differently from the
+  # applied state's port_info, producing a perpetual "must be replaced"
+  # diff (destroying and recreating the whole firewall) on every future
+  # plan even with zero real changes. Confirmed directly against the
+  # provider schema and a real post-apply plan.
   port_info {
-    protocol  = "tcp"
-    from_port = 22
-    to_port   = 22
+    protocol          = "tcp"
+    from_port         = 22
+    to_port           = 22
+    cidrs             = ["0.0.0.0/0"]
+    ipv6_cidrs        = ["::/0"]
+    cidr_list_aliases = []
   }
   port_info {
-    protocol  = "tcp"
-    from_port = 80
-    to_port   = 80
+    protocol          = "tcp"
+    from_port         = 80
+    to_port           = 80
+    cidrs             = ["0.0.0.0/0"]
+    ipv6_cidrs        = ["::/0"]
+    cidr_list_aliases = []
   }
   port_info {
-    protocol  = "tcp"
-    from_port = 443
-    to_port   = 443
+    protocol          = "tcp"
+    from_port         = 443
+    to_port           = 443
+    cidrs             = ["0.0.0.0/0"]
+    ipv6_cidrs        = ["::/0"]
+    cidr_list_aliases = []
   }
 }
