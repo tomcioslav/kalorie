@@ -18,7 +18,7 @@ def _jwks_url() -> str:
     )
 
 
-def _issuer() -> str:
+def issuer_url() -> str:
     return f"https://cognito-idp.{settings.cognito_region}.amazonaws.com/{settings.cognito_user_pool_id}"
 
 
@@ -39,7 +39,7 @@ def verify_access_token(token: str) -> str:
             token,
             signing_key.key,
             algorithms=["RS256"],
-            issuer=_issuer(),
+            issuer=issuer_url(),
         )
     except Exception as exc:
         # Deliberately broader than PyJWTError. With Cognito unconfigured

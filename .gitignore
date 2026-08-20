@@ -8,3 +8,10 @@ __pycache__/
 *.db
 *.db-shm
 *.db-wal
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+*.tfplan
+crash*.log
+*.auto.tfvars

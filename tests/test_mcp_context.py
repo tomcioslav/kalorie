@@ -199,7 +199,7 @@ async def test_401_challenge_header_survives_a_hostile_error_message(monkeypatch
     _assert_401_challenge(messages)
     header = dict(messages[0]["headers"])[b"www-authenticate"].decode()
     assert "\r" not in header and "\n" not in header
-    assert header.count('"') == 4, header  # exactly the two quoted values
+    assert header.count('"') == 6, header  # exactly the three quoted values
     header.encode("ascii")  # must be byte-safe as a header value
 
 

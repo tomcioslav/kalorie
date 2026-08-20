@@ -1,0 +1,12 @@
+# Copy to terraform.tfvars and fill in a real value. terraform.tfvars is
+# gitignored -- never commit real secrets.
+usda_api_key = "your-real-usda-api-key"
+
+# Optional: choose a specific initial temporary password for one or more
+# household members instead of letting Terraform generate a random one.
+# Anyone left out of this map still gets a random temp password, emailed
+# to them automatically. Must satisfy the pool's password policy (8+
+# characters, at least one uppercase, one lowercase, one number).
+# cognito_temp_passwords = {
+#   "joanna.kolbuc@gmail.com" = "SomeChosenPassw0rd"
+# }

@@ -282,3 +282,32 @@ def test_invalid_date_is_a_tool_error_not_a_silent_write(client, sqlite_db, keyp
     body = response.json()["result"]
     assert body["isError"] is True
     assert entries_repo.query_day("cognito-sub-abc", "2026-8-16") == []
+
+
+def test_well_known_endpoint_returns_metadata_without_any_token(client, monkeypatch):
+    # Prove the endpoint is reachable with no token AND with anonymous access
+    # turned off -- otherwise this test would pass even if the discovery
+    # router were (incorrectly) nested inside the auth middleware, since the
+    # rest of this file's autouse fixtures leave ALLOW_ANONYMOUS_USER set,
+    # which would let a tokenless request through either way.
+    monkeypatch.delenv(ALLOW_ANONYMOUS_ENV_VAR, raising=False)
+    response = client.get("/.well-known/oauth-protected-resource")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["resource"] == config.settings.public_mcp_url
+    assert body["authorization_servers"] == [
+        f"https://cognito-idp.{config.settings.cognito_region}.amazonaws.com/{config.settings.cognito_user_pool_id}"
+    ]
+
+
+def test_401_response_includes_resource_metadata_pointer(monkeypatch, sqlite_db):
+    monkeypatch.delenv(ALLOW_ANONYMOUS_ENV_VAR, raising=False)
+    ingredients_repo.put(Ingredient("usda#1", "egg", "usda", Macros(143, 12.6, 0.7, 9.5)))
+
+    response = rpc(TestClient(app), LOG_MEAL_CALL)
+
+    assert response.status_code == 401
+    www_auth = response.headers["www-authenticate"]
+    assert 'resource_metadata="' in www_auth
+    from calorie_tracker.mcp_app import oauth_discovery
+    assert oauth_discovery.metadata_url() in www_auth

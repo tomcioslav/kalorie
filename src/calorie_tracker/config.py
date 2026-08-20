@@ -44,6 +44,12 @@ class Settings(BaseSettings):
     # ignored. These two are what main.py actually binds uvicorn to.
     uvicorn_host: str = "127.0.0.1"
     uvicorn_port: int = 8000
+    # The FULL server URL a user enters in Claude as the connector address
+    # (including /mcp), used verbatim as RFC 9728's "resource" field, and to
+    # derive where the metadata document itself lives. No sensible universal
+    # default -- local dev needs the loopback URL, production needs the real
+    # public one (set via Terraform once the instance/domain exist).
+    public_mcp_url: str = "http://127.0.0.1:8000/mcp"
 
 
 settings = Settings()
