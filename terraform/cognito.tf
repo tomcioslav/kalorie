@@ -30,7 +30,12 @@ resource "aws_cognito_user_pool_client" "this" {
 
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["code"]
-  allowed_oauth_scopes                 = ["openid", "email"]
+  # Must cover everything Cognito's own OIDC discovery document advertises
+  # in scopes_supported ("openid", "email", "phone", "profile") -- a
+  # narrower list here caused a real invalid_scope rejection the moment
+  # Claude's connector requested "profile" in addition to what the
+  # discovery doc offered, confirmed directly against the live pool.
+  allowed_oauth_scopes = ["openid", "email", "phone", "profile"]
   callback_urls                        = ["https://claude.ai/api/mcp/auth_callback"]
   supported_identity_providers         = ["COGNITO"]
 
